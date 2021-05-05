@@ -55,3 +55,5 @@ clone this repository, then:
   by this change
 * `[userfriendly]` This commit is NOT used for hardware support, but
   to make the rom more user friendly
+
+Good Luck!
