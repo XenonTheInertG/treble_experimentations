@@ -30,7 +30,7 @@ elif [ "$1" == "android-11.0" ];then
     phh="android-11.0"
 elif [ "$1" == "android-12.0" ];then
     manifest_url="https://android.googlesource.com/platform/manifest"
-    aosp="android-12.0.0_r3"
+    aosp="android-12.0.0_r7"
     phh="android-12.0"
 else
 	# guess android version from version number
@@ -66,7 +66,7 @@ else
 		git clone https://github.com/phhusson/treble_manifest .repo/local_manifests -b $phh
 	fi
 fi
-repo sync -c -j 1 --force-sync
+repo sync -c -j 1 --force-sync || repo sync -c -j1 --force-sync
 
 repo forall -r '.*opengapps.*' -c 'git lfs fetch && git lfs checkout'
 (cd device/phh/treble; git clean -fdx; bash generate.sh)
@@ -88,9 +88,21 @@ bash "$originFolder"/list-patches.sh
 cp patches.zip release/$rom_fp/patches.zip
 
 if [ "$build_target" == "android-12.0" ];then
-	buildVariant treble_arm64_bvS-userdebug roar-arm64-ab-vanilla
-	buildVariant treble_arm64_bfS-userdebug roar-arm64-ab-floss
-	buildVariant treble_a64_bvS-userdebug roar-arm32_binder64-ab-vanilla
+    (
+        git clone https://github.com/phhusson/sas-creator
+        cd sas-creator
+
+        git clone https://github.com/phhusson/vendor_vndk -b android-10.0
+    )
+
+	buildVariant treble_arm64_bvS-userdebug squeak-arm64-ab-vanilla
+    ( cd sas-creator; bash lite-adapter.sh 64; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-vanilla.img.xz )
+
+	buildVariant treble_arm64_bfS-userdebug squeak-arm64-ab-floss
+    ( cd sas-creator; bash lite-adapter.sh 64; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-floss.img.xz )
+
+	buildVariant treble_a64_bvS-userdebug squeak-arm32_binder64-ab-vanilla
+    ( cd sas-creator; bash lite-adapter.sh 32; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm32_binder64-ab-vndklite-vanilla.img.xz )
 elif [ "$build_target" == "android-11.0" ];then
     (
         git clone https://github.com/phhusson/sas-creator
