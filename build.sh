@@ -30,7 +30,7 @@ elif [ "$1" == "android-11.0" ];then
     phh="android-11.0"
 elif [ "$1" == "android-12.0" ];then
     manifest_url="https://android.googlesource.com/platform/manifest"
-    aosp="android-12.0.0_r11"
+    aosp="android-12.0.0_r16"
     phh="android-12.0"
 else
 	# guess android version from version number
@@ -97,21 +97,27 @@ if [ "$build_target" == "android-12.0" ];then
 
 	buildVariant treble_arm64_bvS-userdebug squeak-arm64-ab-vanilla
     ( cd sas-creator; bash lite-adapter.sh 64; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-vanilla.img.xz )
+    ( cd sas-creator; bash securize.sh s.img; xz -c s-secure.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-vanilla-secure.img.xz )
 
 	buildVariant treble_arm64_bgS-userdebug squeak-arm64-ab-gapps
     ( cd sas-creator; bash lite-adapter.sh 64; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-gapps.img.xz )
+    ( cd sas-creator; bash securize.sh s.img; xz -c s-secure.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-gapps-secure.img.xz )
 
 	buildVariant treble_arm64_boS-userdebug squeak-arm64-ab-gogapps
     ( cd sas-creator; bash lite-adapter.sh 64; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-gogapps.img.xz )
+    ( cd sas-creator; bash securize.sh s.img; xz -c s-secure.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-gogapps-secure.img.xz )
 
 	buildVariant treble_arm64_bfS-userdebug squeak-arm64-ab-floss
     ( cd sas-creator; bash lite-adapter.sh 64; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-floss.img.xz )
+    ( cd sas-creator; bash securize.sh s.img; xz -c s-secure.img -T0 > ../release/$rom_fp/system-squeak-arm64-ab-vndklite-floss-secure.img.xz )
 
 	buildVariant treble_a64_bvS-userdebug squeak-arm32_binder64-ab-vanilla
     ( cd sas-creator; bash lite-adapter.sh 32; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm32_binder64-ab-vndklite-vanilla.img.xz )
+    ( cd sas-creator; bash securize.sh s.img; xz -c s-secure.img -T0 > ../release/$rom_fp/system-squeak-arm32_binder64-ab-vndklite-vanilla-secure.img.xz )
 
 	buildVariant treble_a64_boS-userdebug squeak-arm32_binder64-ab-gogapps
     ( cd sas-creator; bash lite-adapter.sh 32; xz -c s.img -T0 > ../release/$rom_fp/system-squeak-arm32_binder64-ab-vndklite-gogapps.img.xz )
+    ( cd sas-creator; bash securize.sh s.img; xz -c s-secure.img -T0 > ../release/$rom_fp/system-squeak-arm32_binder64-ab-vndklite-gogapps-secure.img.xz )
 elif [ "$build_target" == "android-11.0" ];then
     (
         git clone https://github.com/phhusson/sas-creator
