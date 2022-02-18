@@ -13,8 +13,14 @@ g = Github(config['github']['token'])
 
 repo = g.get_user().get_repo("treble_experimentations")
 
-release = repo.create_git_release(sys.argv[2], sys.argv[1] + " " + sys.argv[2], "Automatic release", draft = True)
-print("Made release " + str(release))
+release = repo.create_git_release(
+    sys.argv[2],
+    f'{sys.argv[1]} {sys.argv[2]}',
+    "Automatic release",
+    draft=True,
+)
+
+print(f'Made release {str(release)}')
 folder = sys.argv[3]
 for f in os.listdir(folder):
     path = os.path.join(folder, f)
