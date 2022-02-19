@@ -25,9 +25,7 @@ comments = [issue.body] + [x.body for x in repo.get_comments() ]
 attachments = []
 for c in comments:
     matches = re.findall(r'\[([^]]*)\]\(([^)]*)\)', c)
-    for m in matches:
-        attachments.append(m[1])
-
+    attachments.extend(m[1] for m in matches)
 os.system("rm -Rf tmp*")
 apkFiles = []
 propFiles = []
@@ -49,19 +47,16 @@ for attach in attachments:
         for f in z.filelist:
             fileId+=1
             if "prop" in f.filename:
-                generated = z.extract(f, path = "tmp-" + str(fileId))
+                generated = z.extract(f, path=f'tmp-{fileId}')
                 propFiles += [generated]
             if f.filename.endswith("apk"):
-                generated = z.extract(f, path = "tmp-" + str(fileId))
+                generated = z.extract(f, path=f'tmp-{fileId}')
                 apkFiles += [generated]
-    else:
-        #Assume text file
-        if "prop" in attach:
-            fName = "tmp-" + str(fileId)
-            f = open(fName, "wb")
+    elif "prop" in attach:
+        fName = f'tmp-{fileId}'
+        with open(fName, "wb") as f:
             f.write(data)
-            f.close()
-            propFiles += [ fName ]
+        propFiles += [ fName ]
 
 print("Got apks", apkFiles)
 print("Got props", propFiles)
@@ -88,7 +83,7 @@ for pf in propFiles:
         if res is not None:
             density = res[2]
 
-print("Found prefix " + fingerprintPrefix)
+print(f'Found prefix {fingerprintPrefix}')
 print("\t" + str(brand))
 print("\t" + str(model))
 print("\t" + density)
