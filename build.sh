@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rom_fp="$(date +%y%m%d)"
-originFolder="$(dirname "$0")"
+originFolder="$(dirname "$(readlink -f -- "$0")")"
 mkdir -p release/$rom_fp/
 set -e
 
@@ -30,12 +30,14 @@ elif [ "$1" == "android-11.0" ];then
     phh="android-11.0"
 elif [ "$1" == "android-12.0" ];then
     manifest_url="https://android.googlesource.com/platform/manifest"
-    aosp="android-12.0.0_r28"
+    aosp="android-12.1.0_r5"
     phh="android-12.0"
 else
 	# guess android version from version number
 	rebuild_release="yes"
-	if [ -n "$(echo $1 | grep -E '^v3..')" ];then
+	if [ -n "$(echo $1 | grep -E '^v4..')" ];then
+		build_target="android-12.0"
+	elif [ -n "$(echo $1 | grep -E '^v3..')" ];then
 		build_target="android-11.0"
 	elif [ -n "$(echo $1 | grep -E '^v2..')" ];then
 		build_target="android-10.0"
@@ -71,6 +73,9 @@ repo sync -c -j 1 --force-sync || repo sync -c -j1 --force-sync
 repo forall -r '.*opengapps.*' -c 'git lfs fetch && git lfs checkout'
 (cd device/phh/treble; git clean -fdx; if [ -f phh.mk ];then bash generate.sh phh;else bash generate.sh;fi)
 (cd vendor/foss; git clean -fdx; bash update.sh)
+if [ "$build_target" == "android-12.0" ] && grep -q lottie packages/apps/Launcher3/Android.bp;then
+    (cd vendor/partner_gms; git am $originFolder/0001-Fix-SearchLauncher-for-Android-12.1.patch || true)
+fi
 rm -f vendor/gapps/interfaces/wifi_ext/Android.bp
 
 . build/envsetup.sh
