@@ -30,7 +30,7 @@ elif [ "$1" == "android-11.0" ];then
     phh="android-11.0"
 elif [ "$1" == "android-12.0" ];then
     manifest_url="https://android.googlesource.com/platform/manifest"
-    aosp="android-12.1.0_r8"
+    aosp="android-12.1.0_r11"
     phh="android-12.0"
 else
 	# guess android version from version number
@@ -75,6 +75,7 @@ repo forall -r '.*opengapps.*' -c 'git lfs fetch && git lfs checkout'
 (cd vendor/foss; git clean -fdx; bash update.sh)
 if [ "$build_target" == "android-12.0" ] && grep -q lottie packages/apps/Launcher3/Android.bp;then
     (cd vendor/partner_gms; git am $originFolder/0001-Fix-SearchLauncher-for-Android-12.1.patch || true)
+    (cd vendor/partner_gms; git am $originFolder/0001-Update-SetupWizard-to-A12.1-to-fix-fingerprint-enrol.patch || true)
 fi
 rm -f vendor/gapps/interfaces/wifi_ext/Android.bp
 
